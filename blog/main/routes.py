@@ -1,10 +1,10 @@
-from flask import request, render_template, redirect, url_for, flash
+from flask import Blueprint, request, render_template, redirect, url_for, flash
 
 from flask_login import current_user, login_user, logout_user, login_required
 
 from werkzeug.exceptions import HTTPException
 
-from blog import app, db, bcrypt
+from blog import db, bcrypt
 from blog.models.user import User, UserAction
 from blog.models.post import Post
 from blog.models.comment import Comment
@@ -22,11 +22,12 @@ from blog.forms.reset.password import ResetPasswordForm
 from blog.utilities.save.profilepicture import save_profile_picture
 from blog.utilities.save.postpicture import save_post_picture
 from blog.utilities.email.reset.password import send_reset_password_email
-from blog.utilities.errors.http_403 import HTTP_403
-from blog.utilities.errors.http_404 import HTTP_404
+from blog.utilities.errors.errors import HTTP_403, HTTP_404
 
 
-@app.route("/", methods=["GET"])
+main = Blueprint("main", __name__)
+
+@main.route("/", methods=["GET"])
 def home():
     try:
         page = request.args.get("page", 1, type=int)
@@ -37,12 +38,12 @@ def home():
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/explore/", methods=["GET"])
+@main.route("/explore/", methods=["GET"])
 def explore():
     popular_posts = db.session.query(Post).order_by((Post.upvotes - Post.downvotes).desc()).limit(3).all()
     return render_template("inc/explore.html", popular_posts=popular_posts)
 
-@app.route("/search/", methods=["GET"])
+@main.route("/search/", methods=["GET"])
 def search():
     try:
         query = request.args.get("query", "").strip()
@@ -60,7 +61,7 @@ def search():
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/about/", methods=["GET"])
+@main.route("/about/", methods=["GET"])
 def about():
     try:
         popular_posts = db.session.query(Post).order_by((Post.upvotes - Post.downvotes).desc()).limit(3).all()
@@ -69,7 +70,7 @@ def about():
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("about"))
 
-@app.route("/posts/<string:username>/", methods=["GET"])
+@main.route("/posts/<string:username>/", methods=["GET"])
 def user_posts(username):
     try:
         page = request.args.get("page", 1, type=int)
@@ -83,7 +84,7 @@ def user_posts(username):
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/profile/", methods=["GET", "POST"])
+@main.route("/profile/", methods=["GET", "POST"])
 @login_required
 def user_profile():
     try:
@@ -106,7 +107,7 @@ def user_profile():
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/register/", methods=["GET", "POST"])
+@main.route("/register/", methods=["GET", "POST"])
 def register():
     try:
         if current_user.is_authenticated:
@@ -126,7 +127,7 @@ def register():
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/login/", methods=["GET", "POST"])
+@main.route("/login/", methods=["GET", "POST"])
 def login():
     try:
         if current_user.is_authenticated:
@@ -147,14 +148,14 @@ def login():
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/logout/", methods=["GET"])
+@main.route("/logout/", methods=["GET"])
 @login_required
 def logout():
     logout_user()
     flash("Logged Out", "success")
     return redirect(url_for("home"))
 
-@app.route("/create/post/", methods=["GET", "POST"])
+@main.route("/create/post/", methods=["GET", "POST"])
 @login_required
 def create_post():
     try:
@@ -174,7 +175,7 @@ def create_post():
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/post/<int:post_id>/", methods=["GET", "POST"])
+@main.route("/post/<int:post_id>/", methods=["GET", "POST"])
 def retrieve_post(post_id):
     try:
         post = Post.query.get_or_404(post_id)
@@ -194,7 +195,7 @@ def retrieve_post(post_id):
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/update/post/<int:post_id>/", methods=["GET", "POST"])
+@main.route("/update/post/<int:post_id>/", methods=["GET", "POST"])
 @login_required
 def update_post(post_id):
     try:
@@ -219,7 +220,7 @@ def update_post(post_id):
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/delete/post/<int:post_id>/", methods=["GET"])
+@main.route("/delete/post/<int:post_id>/", methods=["GET"])
 @login_required
 def delete_post(post_id):
     try:
@@ -236,7 +237,7 @@ def delete_post(post_id):
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/upvote/post/<int:post_id>/", methods=["GET"])
+@main.route("/upvote/post/<int:post_id>/", methods=["GET"])
 @login_required
 def upvote(post_id):
     try:
@@ -264,7 +265,7 @@ def upvote(post_id):
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/downvote/post/<int:post_id>/", methods=["GET"])
+@main.route("/downvote/post/<int:post_id>/", methods=["GET"])
 @login_required
 def downvote(post_id):
     try:
@@ -293,7 +294,7 @@ def downvote(post_id):
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))
 
-@app.route("/update/comment/<int:comment_id>/", methods=["GET", "POST"])
+@main.route("/update/comment/<int:comment_id>/", methods=["GET", "POST"])
 @login_required
 def update_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
@@ -310,7 +311,7 @@ def update_comment(comment_id):
     popular_posts = db.session.query(Post).order_by((Post.upvotes - Post.downvotes).desc()).limit(3).all()
     return render_template("blog/forms/comments/update/comment.html", form=form, popular_posts=popular_posts, title="Update Comment")
 
-@app.route("/delete/comment/<int:comment_id>/", methods=["GET"])
+@main.route("/delete/comment/<int:comment_id>/", methods=["GET"])
 @login_required
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(comment_id)
@@ -322,7 +323,7 @@ def delete_comment(comment_id):
     flash("Comment Deleted Successfully!", "success")
     return redirect(url_for("retrieve_post", post_id=post_id))
 
-@app.route("/reset/password/request/", methods=["GET", "POST"])
+@main.route("/reset/password/request/", methods=["GET", "POST"])
 def reset_password_request():
     if current_user.is_authenticated:
         return redirect(url_for("home"))
@@ -335,7 +336,7 @@ def reset_password_request():
     popular_posts = db.session.query(Post).order_by((Post.upvotes - Post.downvotes).desc()).limit(3).all()
     return render_template("blog/forms/reset/request.html", form=form, popular_posts=popular_posts, title="Reset Password Request")
 
-@app.route("/reset/password/<token>/", methods=["GET", "POST"])
+@main.route("/reset/password/<token>/", methods=["GET", "POST"])
 def reset_password(token):
     if current_user.is_authenticated:
         return redirect(url_for("home"))

@@ -8,11 +8,11 @@
         {% endif %}
         <div class="media-body">
             <div class="article-metadata">
-                <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <a class="mr-2" href="{{ url_for('main.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
                 <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d') }}</small>
                 {% if post.author == current_user %}
                     <div class="float-right">
-                        <a class="btn btn-sm btn-primary mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+                        <a class="btn btn-sm btn-primary mt-1 mb-1" href="{{ url_for('main.update_post', post_id=post.id) }}">Update</a>
                         <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
                     </div>
                     <br><br>
@@ -27,10 +27,10 @@
             <p class="article-content">{{ post.content }}</p>
                 {% if current_user.is_authenticated %}
                 <div>
-                    <form action="{{ url_for('upvote', post_id=post.id) }}" method="GET" style="display: inline;">
+                    <form action="{{ url_for('main.upvote', post_id=post.id) }}" method="GET" style="display: inline;">
                         <button type="submit" class="btn btn-success btn-sm">Upvote</button>
                     </form>
-                    <form action="{{ url_for('downvote', post_id=post.id) }}" method="GET" style="display: inline;">
+                    <form action="{{ url_for('main.downvote', post_id=post.id) }}" method="GET" style="display: inline;">
                         <button type="submit" class="btn btn-danger btn-sm">Downvote</button>
                     </form>
                     <span class="ml-2">Total Points: {{ post.upvotes - post.downvotes }}</span>
@@ -46,12 +46,12 @@
                 <img class="rounded-circle article-img" src="{{ url_for('static', filename='images/profile/' + comment.author.profile_picture) }}">
                 <div class="media-body">
                     <div class="article-metadata">
-                        <a class="mr-2" href="{{ url_for('user_posts', username=comment.author.username) }}">{{ comment.author.username }}</a>
+                        <a class="mr-2" href="{{ url_for('main.user_posts', username=comment.author.username) }}">{{ comment.author.username }}</a>
                         <small class="text-muted">{{ comment.created_at.strftime('%Y-%m-%d') }}</small>
                         {% if comment.author == current_user %}
                             <div class="float-right">
-                                <a class="btn btn-sm btn-primary mt-1 mb-1" href="{{ url_for('update_comment', comment_id=comment.id) }}">Update</a>
-                                <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="GET" class="d-inline">
+                                <a class="btn btn-sm btn-primary mt-1 mb-1" href="{{ url_for('main.update_comment', comment_id=comment.id) }}">Update</a>
+                                <form action="{{ url_for('main.delete_comment', comment_id=comment.id) }}" method="GET" class="d-inline">
                                     <input class="btn btn-danger btn-sm m-1" type="submit" value="Delete">
                                 </form>
                             </div>
@@ -92,7 +92,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <form action="{{ url_for('delete_post', post_id=post.id) }}" method="GET">
+                    <form action="{{ url_for('main.delete_post', post_id=post.id) }}" method="GET">
                         <input class="btn btn-danger" type="submit" value="Delete">
                     </form>
                 </div>

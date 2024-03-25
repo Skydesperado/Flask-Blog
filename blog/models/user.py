@@ -1,4 +1,6 @@
-from blog import app, db, login_manager
+from flask import current_app
+
+from blog import db, login_manager
 
 from flask_login import UserMixin
 
@@ -24,12 +26,12 @@ class User(db.Model, UserMixin):
     actions = db.relationship("UserAction", backref="user", lazy="dynamic")
 
     def get_reset_password_token(self, expires_seconds=1800):
-        serializer = Serializer(app.config["SECRET_KEY"], expires_seconds)
+        serializer = Serializer(current_app.config["SECRET_KEY"], expires_seconds)
         return serializer.dumps({"user_id": self.id}, salt="b4d3f76e8a2c1e5f")
 
     @staticmethod
     def verify_reset_password_token(token):
-        serializer = Serializer(app.config["SECRET_KEY"])
+        serializer = Serializer(current_app.config["SECRET_KEY"])
         try:
             user_id = serializer.loads(token)["user_id"]
         except:

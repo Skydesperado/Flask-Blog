@@ -2,7 +2,7 @@
     {% for post in popular_posts %}
         <ul class="widget-list">
             <li>
-                <a href="{{ url_for('retrieve_post', post_id=post.id) }}">
+                <a href="{{ url_for('main.retrieve_post', post_id=post.id) }}">
                     {% if post.post_picture %}
                         <img class="post-picture" src="{{ url_for('static', filename='images/uploads/' + post.post_picture) }}" alt="Post Picture">
                     {% else %}

@@ -10,10 +10,10 @@
             {% endif %}
             <div class="media-body">
                 <div class="article-metadata">
-                    <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                    <a class="mr-2" href="{{ url_for('main.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
                     <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d') }}</small>
                 </div>
-                <h2><a class="article-title" href="{{ url_for('retrieve_post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                <h2><a class="article-title" href="{{ url_for('main.retrieve_post', post_id=post.id) }}">{{ post.title }}</a></h2>
                 {% if post.post_picture %}
                     <div class="mb-3 text-center">
                         <img class="img-fluid rounded border border-secondary" src="{{ url_for('static', filename='images/uploads/' + post.post_picture) }}" alt="Post Picture" style="max-width: 100%; max-height: 100%; border-radius: 18px;">
@@ -26,9 +26,9 @@
     {% for page_number in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
         {% if page_number %}
             {% if posts.page == page_number %}
-                <a class="btn btn-info mb-4" href="{{ url_for('search', query=query, page=page_number) }}">{{ page_number }}</a>
+                <a class="btn btn-info mb-4" href="{{ url_for('main.search', query=query, page=page_number) }}">{{ page_number }}</a>
             {% else %}
-                <a class="btn btn-outline-info mb-4" href="{{ url_for('search', query=query, page=page_number) }}">{{ page_number }}</a>
+                <a class="btn btn-outline-info mb-4" href="{{ url_for('main.search', query=query, page=page_number) }}">{{ page_number }}</a>
             {% endif %}
         {% else %}
             ...

@@ -12,6 +12,7 @@ flask-login = "*"
 email-validator = "*"
 pillow = "*"
 flask-mail = "*"
+gunicorn = "*"
 
 [dev-packages]
 

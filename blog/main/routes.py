@@ -100,9 +100,8 @@ def user_profile():
         elif request.method == "GET":
             form.username.data = current_user.username
             form.email.data = current_user.email
-        profile_picture = url_for("static", filename="images/uploads/" + current_user.profile_picture)
         popular_posts = db.session.query(Post).order_by((Post.upvotes - Post.downvotes).desc()).limit(3).all()
-        return render_template("blog/user/profile.html", form=form, profile_picture=profile_picture, popular_posts=popular_posts, title="Profile")
+        return render_template("blog/user/profile.html", form=form, popular_posts=popular_posts, title="Profile")
     except Exception as exception:
         flash(f"An Error Occurred: {str(exception)}", "danger")
         return redirect(url_for("home"))

@@ -42,6 +42,9 @@ def create_app():
     app.register_blueprint(main)
     app.register_blueprint(errors)
 
+    if not os.path.exists(app.config["SQLALCHEMY_DATABASE_URI"]):
+        os.makedirs(os.path.dirname(app.config["SQLALCHEMY_DATABASE_URI"]))
+
     create_db_tables(app)
 
     return app

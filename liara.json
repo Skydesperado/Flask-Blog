@@ -1,4 +1,8 @@
 {
+    "flask": {
+        "pythonVersion": "3.11",
+        "appModule": "run:app"
+    },
     "disks": [
         {
             "name": "flask-disk",

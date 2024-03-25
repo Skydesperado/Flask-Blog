@@ -21,7 +21,7 @@ login_manager.login_message = "Please Login"
 login_manager.login_message_category = "info"
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, instance_path=None)
 
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../blog/database/sqlite3.db"

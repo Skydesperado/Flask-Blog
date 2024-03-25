@@ -1,4 +1,7 @@
 {
+    "flask": {
+        "appModule": "run:app"
+    },
     "disks": [
         {
             "name": "flask-disk",

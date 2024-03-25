@@ -1,7 +1,4 @@
 {
-    "flask": {
-        "appModule": "blog:app"
-    },
     "disks": [
         {
             "name": "flask-disk",

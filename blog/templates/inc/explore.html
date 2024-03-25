@@ -1,0 +1,22 @@
+{% if popular_posts %}
+    {% for post in popular_posts %}
+        <ul class="widget-list">
+            <li>
+                <a href="{{ url_for('retrieve_post', post_id=post.id) }}">
+                    {% if post.post_picture %}
+                        <img class="post-picture" src="{{ url_for('static', filename='images/uploads/' + post.post_picture) }}" alt="Post Picture">
+                    {% else %}
+                        <img class="post-picture" src="{{ url_for('static', filename='images/post/default.png') }}" alt="Default Picture">
+                    {% endif %}
+                    <span class="post-title">{{ post.title }}</span>
+                </a>
+            </li>
+        </ul>
+    {% endfor %}
+{% else %}
+    <ul class="widget-list">
+        <li>
+            <p>None</p>
+        </li>
+    </ul>
+{% endif %}

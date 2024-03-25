@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+    <article class="media content-section">
+        {% if post.author.profile_picture and post.author.profile_picture != "default.png" %}
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='images/uploads/' + post.author.profile_picture) }}">
+        {% else %}
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='images/profile/default.png') }}">
+        {% endif %}
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{{ url_for('user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+                <small class="text-muted">{{ post.created_at.strftime('%Y-%m-%d') }}</small>
+                {% if post.author == current_user %}
+                    <div class="float-right">
+                        <a class="btn btn-sm btn-primary mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+                        <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+                    </div>
+                    <br><br>
+                {% endif %}
+            </div>
+            <h2 class="article-title">{{ post.title }}</h2>
+            {% if post.post_picture %}
+                    <div class="mb-3 text-center">
+                        <img class="img-fluid rounded border border-secondary" src="{{ url_for('static', filename='images/uploads/' + post.post_picture) }}" alt="Post Picture" style="max-width: 100%; max-height: 100%; border-radius: 18px;">
+                    </div>
+            {% endif %}
+            <p class="article-content">{{ post.content }}</p>
+                {% if current_user.is_authenticated %}
+                <div>
+                    <form action="{{ url_for('upvote', post_id=post.id) }}" method="GET" style="display: inline;">
+                        <button type="submit" class="btn btn-success btn-sm">Upvote</button>
+                    </form>
+                    <form action="{{ url_for('downvote', post_id=post.id) }}" method="GET" style="display: inline;">
+                        <button type="submit" class="btn btn-danger btn-sm">Downvote</button>
+                    </form>
+                    <span class="ml-2">Total Points: {{ post.upvotes - post.downvotes }}</span>
+                </div>
+                {% endif %}
+        </div>
+    </article>
+    {% if comments %}
+    <h3 class="mb-4">Comments</h3>
+    {% for comment in comments %}
+        <div class="content-section">
+            <article class="media">
+                <img class="rounded-circle article-img" src="{{ url_for('static', filename='images/profile/' + comment.author.profile_picture) }}">
+                <div class="media-body">
+                    <div class="article-metadata">
+                        <a class="mr-2" href="{{ url_for('user_posts', username=comment.author.username) }}">{{ comment.author.username }}</a>
+                        <small class="text-muted">{{ comment.created_at.strftime('%Y-%m-%d') }}</small>
+                        {% if comment.author == current_user %}
+                            <div class="float-right">
+                                <a class="btn btn-sm btn-primary mt-1 mb-1" href="{{ url_for('update_comment', comment_id=comment.id) }}">Update</a>
+                                <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="GET" class="d-inline">
+                                    <input class="btn btn-danger btn-sm m-1" type="submit" value="Delete">
+                                </form>
+                            </div>
+                            <br><br>
+                        {% endif %}
+                    </div>
+                    <p class="article-content">{{ comment.content }}</p>
+                </div>
+            </article>
+        </div>
+    {% endfor %}
+{% endif %}
+    {% if current_user.is_authenticated %}
+        <div class="content-section">
+            <form method="POST" action="">
+                {{ form.csrf_token }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Leave a Comment</legend>
+                    <div class="form-group">
+                        {{ form.content.label(class="form-control-label") }}
+                        {{ form.content(class="form-control", rows="3") }}
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-outline-info") }}
+                </div>
+            </form>
+        </div>
+    {% endif %}
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <form action="{{ url_for('delete_post', post_id=post.id) }}" method="GET">
+                        <input class="btn btn-danger" type="submit" value="Delete">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

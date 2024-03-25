@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="media">
+            {% if not profile_picture %}
+                <img class="rounded-circle article-img" src="{{ url_for('static', filename='images/profile/default.png') }}">
+            {% else %}
+                <img class="rounded-circle account-img" src="{{ profile_picture }}">
+            {% endif %}
+            <div class="media-body">
+                <h2 class="account-heading">{{ current_user.username }}</h2>
+                <p class="text-secondary">{{ current_user.email }}</p>
+            </div>
+        </div>
+        {% include "blog/user/forms/inc/profile.html" %}
+    </div>
+{% endblock content %}

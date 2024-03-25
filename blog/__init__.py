@@ -42,7 +42,10 @@ def create_app():
     app.register_blueprint(main)
     app.register_blueprint(errors)
 
-    with app.app_context():
-        db.create_all()
+    create_db_tables(app)
 
     return app
+
+def create_db_tables(app):
+    with app.app_context():
+        db.create_all()
